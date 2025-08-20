@@ -1,3 +1,4 @@
+import HomeFilter from '@/components/filters/HomeFilter';
 import LocalSearch from '@/components/search/LocalSearch';
 import { Button } from '@/components/ui/button';
 import ROUTES from '@/constants/routes';
@@ -5,43 +6,33 @@ import Link from 'next/link';
 import React from 'react'
 
 const questions = [
-  { 
-    _id: '1', 
-    title: 'What is Next.js?', 
-    description: 'Next.js is a React framework...', 
-    tags: [ 
-      { _id: '1', name: 'React' },
-      { _id: '2', name: 'JavaScript' },
+  {
+    _id: "1",
+    title: "How to learn React?",
+    description: "I want to learn React, can anyone help me?",
+    tags: [
+      { _id: "1", name: "React" },
+      { _id: "2", name: "JavaScript" },
     ],
-    author: {
-      _id: '1',
-      name: 'John Doe',
-      avatar: '/avatars/john_doe.png'
-    },
+    author: { _id: "1", name: "John Doe" },
     upvotes: 10,
     answers: 5,
     views: 100,
     createdAt: new Date(),
   },
-  { 
-    _id: '2', 
-    title: 'How to use Tailwind CSS?', 
-    description: 'To use Tailwind CSS...',
-    author: {
-      _id: '2',
-      name: 'Jane Smith',
-      avatar: '/avatars/jane_smith.png'
-    }
-  },
-  { 
-    _id: '3', 
-    title: 'What is TypeScript?', 
-    description: 'TypeScript is a superset of JavaScript...',
-    author: {
-      _id: '3',
-      name: 'Alice Johnson',
-      avatar: '/avatars/alice_johnson.png'
-    }
+  {
+    _id: "2",
+    title: "How to learn JavaScript?",
+    description: "I want to learn JavaScript, can anyone help me?",
+    tags: [
+      { _id: "1", name: "JavaScript" },
+      { _id: "2", name: "JavaScript" },
+    ],
+    author: { _id: "1", name: "John Doe" },
+    upvotes: 10,
+    answers: 5,
+    views: 100,
+    createdAt: new Date(),
   },
 ]
 
@@ -50,11 +41,17 @@ interface SearchParams {
 }
 
 const Home = async ({ searchParams }: SearchParams) => {
-  const { query = '' } = await searchParams;
+  const { query = "", filter = "" } = await searchParams;
 
-  const filteredQuestions = questions.filter((question) =>
-    question.title.toLowerCase().includes(query?.toLowerCase())
-  );
+  const filteredQuestions = questions.filter((question) => {
+    const matchesQuery = question.title
+      .toLowerCase()
+      .includes(query.toLowerCase());
+    const matchesFilter = filter
+      ? question.tags[0].name.toLowerCase() === filter.toLowerCase()
+      : true;
+    return matchesQuery && matchesFilter;
+  });
 
   return (
     <>
@@ -74,7 +71,7 @@ const Home = async ({ searchParams }: SearchParams) => {
           otherClasses='flex-1'
         />
       </section>
-      {/* HomeFilter */}
+      <HomeFilter />
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {filteredQuestions.map((question) => (

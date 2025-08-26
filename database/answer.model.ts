@@ -21,6 +21,6 @@ const AnswerSchema = new Schema<IAnswer>(
     }
 );
 
-const Answer = models?.Account || model<IAnswer>('Account', AnswerSchema);
+const Answer = models?.answer || model<IAnswer>('Answer', AnswerSchema);
 
 export default Answer;

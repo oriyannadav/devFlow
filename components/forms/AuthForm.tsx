@@ -1,41 +1,60 @@
 "use client"
  
 import { zodResolver } from "@hookform/resolvers/zod"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { DefaultValues, FieldValues, Path, SubmitHandler, useForm } from "react-hook-form"
 import { z, ZodType } from "zod"
  
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import ROUTES from "@/constants/routes"
-import Link from "next/link"
+import { ActionResponse } from "@/types/global"
+import { toast } from "sonner"
 
-    interface AuthFormProps<T extends FieldValues> {
-        schema: ZodType<T>
-        defaultValues: T,
-        onSubmit: (data: T) => Promise<{ success: boolean }>,
-        formType: 'SIGN_IN' | 'SIGN_UP'
-    }
+interface AuthFormProps<T extends FieldValues> {
+    schema: ZodType<T, any, any>
+    defaultValues: DefaultValues<T>,
+    onSubmit: (data: T) => Promise<ActionResponse>,
+    formType: 'SIGN_IN' | 'SIGN_UP'
+}
 
-    const AuthForm = <T extends FieldValues>({
-        schema,
-        defaultValues,
-        formType,
-        onSubmit,
-    }) => {
+const AuthForm = <T extends FieldValues>({
+    schema,
+    defaultValues,
+    formType,
+    onSubmit,
+}: AuthFormProps<T>) => {
+    const router = useRouter();
+
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
-        defaultValues: defaultValues as DefaultValues<T>,
-    })
+        defaultValues,
+})
 
-    const handleSubmit: SubmitHandler<T> = async () => {}
+    const handleSubmit: SubmitHandler<T> = async (data) => {
+        const result = (await onSubmit(data)) as ActionResponse;
+
+        if (result?.success) {
+            toast(
+                formType === 'SIGN_IN'
+                    ? 'You have successfully signed in.'
+                    : 'You have successfully signed up.',
+                {
+                    description: 'Success',
+                }
+            );
+            router.push(ROUTES.HOME);
+        } else {
+            toast(
+                `Error ${result?.status}`,
+                {
+                    description: result?.error?.message,
+                }
+            );
+        }
+    };
 
     const buttonText = formType === 'SIGN_IN' ? 'Sign In' : 'Sign Up'
 
@@ -49,7 +68,7 @@ import Link from "next/link"
                         name={field as Path<T>}
                         render={({ field }) => (
                             <FormItem className="flex w-full flex-col gap-2.5">
-                            <FormLabel className="paragraph-medium text-dark400_light700">
+                            <FormLabel className="paragraph-medium text-dark400_light800">
                                 {field.name === 'email' ? 'Email Address' : field.name.charAt(0).toUpperCase() + field.name.slice(1)}
                             </FormLabel>
                             <FormControl>
@@ -57,7 +76,7 @@ import Link from "next/link"
                                     required 
                                     type={field.name === 'password' ? 'password' : 'text'} 
                                     {...field} 
-                                    className="paragraph-regula background-light900_dark300 light-border-2 text-dark300_light700 no-focus min-h-12 rounded-1.5 border"
+                                    className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 no-focus min-h-12 rounded-1.5 border"
                                 />
                             </FormControl>
                             <FormMessage />

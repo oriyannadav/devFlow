@@ -10,6 +10,7 @@ if (!MONGODB_URI) {
 }
 
 interface  MongooseCache {
+    startSession(): unknown;
     conn: Mongoose | null;
     promise: Promise<Mongoose> | null;
 }

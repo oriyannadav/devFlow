@@ -18,7 +18,6 @@ import TagCard from "../cards/TagCard";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from "../ui/input";
-import { Question } from "@/types/global";
 
 const Editor = dynamic(() => import('@/components/editor'), {
     ssr: false
@@ -93,7 +92,7 @@ const QuestionForm = ({question, isEdit = false}: Params) => {
                 }
     
                 if (result.data) {
-                    router.push(ROUTES.QUESTION(result.data!._id));
+                    router.push(ROUTES.QUESTION(result.data._id));
                 } else {
                     toast.error(result?.error?.message || 'Something went wrong');
                 }
@@ -108,7 +107,7 @@ const QuestionForm = ({question, isEdit = false}: Params) => {
             }
     
             if (result.data) {
-                router.push(ROUTES.QUESTION(result.data!._id));
+                router.push(ROUTES.QUESTION(result.data._id));
             } else {
                 toast.error(result?.error?.message || 'Something went wrong');
             }

@@ -302,8 +302,6 @@ export async function incrementViews(params: IncrementViewsParams): Promise<Acti
         question.views += 1;
 
         await question.save();
-        
-        revalidatePath(ROUTES.QUESTION(questionId));
 
         return {
             success: true,

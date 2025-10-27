@@ -8,8 +8,11 @@ import Tag, { ITagDoc } from "@/database/tag.model";
 
 import action from "../handlers/actions";
 import handleError from "../handlers/error";
-import { AskQuestionSchema, EditQuestionSchema, GetQuestionSchema, PaginatedSearchParamsSchema } from "../validations";
+import { AskQuestionSchema, EditQuestionSchema, GetQuestionSchema, incrementViewsSchema, PaginatedSearchParamsSchema } from "../validations";
 import { ActionResponse, ErrorResponse, PaginatedSearchParams } from "@/types/global";
+import { IncrementViewsParams } from "@/types/action";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
 interface CreateQuestionParams {
     title: string;
@@ -271,6 +274,40 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<Actio
         return {
             success: true,
             data: { questions: JSON.parse(JSON.stringify(questions)), isNext }
+        }
+    } catch (error) {
+        return handleError(error) as ErrorResponse;
+    }
+}
+
+export async function incrementViews(params: IncrementViewsParams): Promise<ActionResponse<{ views: number }>> {
+    const validationResult = await action({
+        params,
+        schema: incrementViewsSchema,
+    });
+
+    if (validationResult instanceof Error) {
+        return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { questionId } = validationResult.params!;
+
+    try {
+        const question = await Question.findById(questionId);
+
+        if (!question) {
+            throw new Error('Question not found');
+        }
+
+        question.views += 1;
+
+        await question.save();
+        
+        revalidatePath(ROUTES.QUESTION(questionId));
+
+        return {
+            success: true,
+            data: { views: question.views },
         }
     } catch (error) {
         return handleError(error) as ErrorResponse;

@@ -147,20 +147,20 @@ const QuestionForm = ({question, isEdit = false}: Params) => {
                     name= 'content'
                     render={({ field }) => (
                         <FormItem className="flex w-full flex-col gap-2.5">
-                        <FormLabel className="paragraph-medium text-dark400_light700">
-                            Detailed explanation of your problem <span className='text-primary-500'>*</span>
-                        </FormLabel>
-                        <FormControl>
-                            <Editor
-                                value={field.value}
-                                editorRef={editorRef}
-                                fieldChange={field.onChange}
-                            />
-                        </FormControl>
-                        <FormDescription className='body-regular text-light-500 mt-2.5'>
-                            Introduce the problem and expand on what you've put in the title.
-                        </FormDescription>
-                        <FormMessage />
+                            <FormLabel className="paragraph-medium text-dark400_light700">
+                                Detailed explanation of your problem <span className='text-primary-500'>*</span>
+                            </FormLabel>
+                            <FormControl>
+                                <Editor
+                                    value={field.value}
+                                    editorRef={editorRef}
+                                    fieldChange={field.onChange}
+                                />
+                            </FormControl>
+                            <FormDescription className='body-regular text-light-500 mt-2.5'>
+                                Introduce the problem and expand on what you've put in the title.
+                            </FormDescription>
+                            <FormMessage />
                         </FormItem>
                     )}
                 />

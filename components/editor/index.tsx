@@ -1,53 +1,50 @@
 'use client'
 // InitializedMDXEditor.tsx
-import type { ForwardedRef } from 'react'
 import {
-  headingsPlugin,
-  listsPlugin,
-  quotePlugin,
-  thematicBreakPlugin,
-  markdownShortcutPlugin,
   MDXEditor,
-  type MDXEditorMethods,
-  toolbarPlugin,
-  ConditionalContents,
-  ChangeCodeMirrorLanguage,
   UndoRedo,
   BoldItalicUnderlineToggles,
+  toolbarPlugin,
+  CodeToggle,
+  InsertCodeBlock,
+  codeBlockPlugin,
+  headingsPlugin,
+  listsPlugin,
+  linkPlugin,
+  quotePlugin,
+  markdownShortcutPlugin,
   ListsToggle,
+  linkDialogPlugin,
   CreateLink,
   InsertImage,
   InsertTable,
-  InsertThematicBreak,
-  InsertCodeBlock,
-  linkPlugin,
-  linkDialogPlugin,
   tablePlugin,
   imagePlugin,
-  codeBlockPlugin,
   codeMirrorPlugin,
+  ConditionalContents,
+  ChangeCodeMirrorLanguage,
+  Separator,
+  InsertThematicBreak,
   diffSourcePlugin,
-} from '@mdxeditor/editor'
-import '@mdxeditor/editor/style.css'
-import { basicDark } from 'cm6-theme-basic-dark'
-import { useTheme } from 'next-themes';
-import { Separator } from '@radix-ui/react-dropdown-menu';
+  MDXEditorMethods,
+} from "@mdxeditor/editor";
+import { basicDark } from "cm6-theme-basic-dark";
+import { useTheme } from "next-themes";
+import { Ref } from "react";
+
+import "@mdxeditor/editor/style.css";
+import "./dark-editor.css";
 
 interface Props {
-  value: string; 
-  fieldChange: (value: string) => void; 
-  editorRef: ForwardedRef<MDXEditorMethods> | null;
+  value: string;
+  editorRef: Ref<MDXEditorMethods> | null;
+  fieldChange: (value: string) => void;
 }
 
-const Editor = ({
-  value,
-  editorRef,
-  fieldChange,
-  ...props
-} : Props) => {
+const Editor = ({ value, editorRef, fieldChange }: Props) => {
   const { resolvedTheme } = useTheme();
 
-  const theme = resolvedTheme === 'dark' ? [basicDark] : [];
+  const themeExtension = resolvedTheme === "dark" ? [basicDark] : [];
   
   return (
     <MDXEditor
@@ -55,47 +52,43 @@ const Editor = ({
       ref={editorRef}
       markdown= {value}
       onChange={fieldChange}
-      className='background-light800_dark200 light-border-2 markdown-editor dark-editor w-full border gtrid'
+      className="background-light800_dark200 light-border-2 markdown-editor dark-editor grid w-full border"
       plugins={[
         headingsPlugin(),
         listsPlugin(),
         linkPlugin(),
         linkDialogPlugin(),
         quotePlugin(),
-        thematicBreakPlugin(),
         markdownShortcutPlugin(),
         tablePlugin(),
         imagePlugin(),
-        codeBlockPlugin({ defaultCodeBlockLanguage: ''}),
+        codeBlockPlugin({ defaultCodeBlockLanguage: "" }),
         codeMirrorPlugin({
           codeBlockLanguages: {
-            css: 'css',
-            txt: 'txt',
-            sql: 'sql',
-            html: 'html',
-            saas: 'saas',
-            scss: 'scss',
-            bash: 'bash',
-            json: 'json',
-            js: 'javascript',
-            ts: 'typescript',
-            '' : 'unspecified',
-            tsx: 'TypeScript (React)',
-            jsx: 'JavaScript (React)',
+            css: "css",
+            txt: "txt",
+            sql: "sql",
+            html: "html",
+            sass: "sass",
+            scss: "scss",
+            bash: "bash",
+            json: "json",
+            js: "javascript",
+            ts: "typescript",
+            "": "unspecified",
+            tsx: "TypeScript (React)",
+            jsx: "JavaScript (React)",
           },
           autoLoadLanguageSupport: true,
-          codeMirrorExtensions: theme,
+          codeMirrorExtensions: themeExtension,
         }),
-        diffSourcePlugin({
-          viewMode: 'rich-text',
-          diffMarkdown: '',
-        }),
+        diffSourcePlugin({ viewMode: "rich-text", diffMarkdown: "" }),
         toolbarPlugin({
           toolbarContents: () => (
-            <ConditionalContents 
+            <ConditionalContents
               options={[
                 {
-                  when: (editor) => editor?.editorType === 'codeblock',
+                  when: (editor) => editor?.editorType === "codeblock",
                   contents: () => <ChangeCodeMirrorLanguage />,
                 },
                 {
@@ -105,6 +98,7 @@ const Editor = ({
                       <Separator />
 
                       <BoldItalicUnderlineToggles />
+                      <CodeToggle />
                       <Separator />
 
                       <ListsToggle />
@@ -116,19 +110,19 @@ const Editor = ({
 
                       <InsertTable />
                       <InsertThematicBreak />
+                      <Separator />
 
                       <InsertCodeBlock />
                     </>
-                  )
-                }
+                  ),
+                },
               ]}
             />
-          )
-        })
+          ),
+        }),
       ]}
-      {...props}
     />
-  )
-}
+  );
+};
 
-export default Editor
+export default Editor;

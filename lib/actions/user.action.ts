@@ -1,4 +1,4 @@
-'user server'
+'use server'
 
 import { FilterQuery } from "mongoose";
 import { ActionResponse, ErrorResponse, PaginatedSearchParams } from "@/types/global";

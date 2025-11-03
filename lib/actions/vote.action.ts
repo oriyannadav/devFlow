@@ -1,13 +1,16 @@
 'use server';
 
-import { CreateVoteSchema, HasVotedSchema, UpdateVoteCountSchema } from "../validations";
-import { CreateVoteParams, HasVotedParams, HasVotedResponse, UpdateVoteCountParams } from "@/types/action";
+import mongoose, { ClientSession } from "mongoose";
+import { revalidatePath } from "next/cache";
+
+import ROUTES from "@/constants/routes";
+import { Answer, Question, Vote } from "@/database";
+
 import action from "../handlers/actions";
 import handleError from "../handlers/error";
+import { CreateVoteSchema, HasVotedSchema, UpdateVoteCountSchema } from "../validations";
+import { CreateVoteParams, HasVotedParams, HasVotedResponse, UpdateVoteCountParams } from "@/types/action";
 import { ActionResponse, ErrorResponse } from "@/types/global";
-import mongoose, { ClientSession } from "mongoose";
-import Vote from "@/database/vote.model";
-import { Answer, Question } from "@/database";
 
 export async function updateVoteCount(params: UpdateVoteCountParams, session?: ClientSession): Promise<ActionResponse> {
     const validationResult = await action({
@@ -61,13 +64,11 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
     session.startTransaction();
 
     try {
-        const existingVote = await Vote.findOne(
-            {
-                author: userId,
-                actionId: targetId,
-                actionType: targetType,
-            }
-        ).session(session);
+        const existingVote = await Vote.findOne({
+            author: userId,
+            actionId: targetId,
+            actionType: targetType,
+        }).session(session);
 
         if(existingVote) {
             if(existingVote.voteType === voteType) {
@@ -89,13 +90,24 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
             }
         } else {
             await Vote.create(
-                [{ targetId, targetType, voteType, change: 1 }],
+                [{ 
+                    author: userId,
+                    actionId: targetId, 
+                    actionType: targetType, 
+                    voteType,
+                }],
                 { session }
+            );
+            await updateVoteCount(
+                { targetId, targetType, voteType, change: 1 }, 
+                session 
             );
         }
 
         await session.commitTransaction();
         session.endSession();
+
+        revalidatePath(ROUTES.QUESTION(targetId));
 
         return { success: true };
     } catch (error) {
@@ -129,12 +141,17 @@ export async function hasVoted(params: HasVotedParams): Promise<ActionResponse<H
         if (!vote) {
             return {
                 success: false,
-                data: {
-                    hasUpvoted: vote.voteType === 'upvote',
-                    hasDownvoted: vote.voteType === 'downvote',
-                }
-            }
+                data: { hasUpvoted: false, hasDownvoted: false },
+            };
         }
+
+        return {
+            success: true,
+            data: {
+                hasUpvoted: vote.voteType === "upvote",
+                hasDownvoted: vote.voteType === "downvote",
+            },
+        };
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }

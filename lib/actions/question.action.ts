@@ -10,9 +10,7 @@ import action from "../handlers/actions";
 import handleError from "../handlers/error";
 import { AskQuestionSchema, EditQuestionSchema, GetQuestionSchema, incrementViewsSchema, PaginatedSearchParamsSchema } from "../validations";
 import { ActionResponse, ErrorResponse, PaginatedSearchParams } from "@/types/global";
-import { IncrementViewsParams } from "@/types/action";
-import { revalidatePath } from "next/cache";
-import ROUTES from "@/constants/routes";
+import { EditQuestionParams, GetQuestionParams, IncrementViewsParams } from "@/types/action";
 
 interface CreateQuestionParams {
     title: string;

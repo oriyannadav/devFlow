@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import DataRenderer from "@/components/DataRenderer";
 import { EMPTY_QUESTION } from "@/constants/states";
+import Pagination from '@/components/Pagination';
 
 const page = async ({ params, searchParams }: RouteParams) => {
     const { id } = await params;
@@ -22,7 +23,7 @@ const page = async ({ params, searchParams }: RouteParams) => {
         query,
     })
 
-    const { tag, questions } =  data || {};
+    const { tag, questions, isNext } =  data || {};
 
     return (
         <>
@@ -51,6 +52,11 @@ const page = async ({ params, searchParams }: RouteParams) => {
                         ))}
                     </div>
                 }
+            />
+
+            <Pagination 
+                page={page}
+                isNext={isNext || false}
             />
         </>
     )

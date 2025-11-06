@@ -12,7 +12,7 @@ const Preview = ({ content }: { content: string }) => {
     const formattedContent = content.replace(/\\/g, '').replace(/&#x20;/g, '');
 
     return (
-        <section className='markdown grid break-words'>
+        <section className='markdown grid wrap-break-word'>
             <MDXRemote 
                 source={formattedContent}
                 components={{

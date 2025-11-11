@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { deleteQuestion } from "@/lib/actions/question.action";
+import { deleteAnswer } from "@/lib/actions/answer.action";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
 interface Props {
@@ -21,11 +22,13 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
     const handleDelete = async () => {
         if  (type === 'Question') {
             await deleteQuestion({ questionId: itemId });
-            
+
             toast('Question deleted',{
                 description: 'Your question has been deleted successfully.'
             })
         } else if (type === 'Answer') {
+            await deleteAnswer({ answerId: itemId });
+            
             toast('Answer deleted', {
                 description: 'Your answer has been deleted successfully.'
             })

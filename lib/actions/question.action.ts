@@ -14,6 +14,8 @@ import { DeleteQuestionParams, EditQuestionParams, GetQuestionParams, IncrementV
 import dbConnect from "../mongoose";
 import { Answer, Collection, Vote } from "@/database";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { createInteraction } from "./interaction.action";
 
 interface CreateQuestionParams {
     title: string;
@@ -69,6 +71,15 @@ export async function createQuestion(params: CreateQuestionParams): Promise<Acti
             { $push: { tags: { $each: tagIds } } },
             { session }
         );
+
+        after(async () => {
+            await createInteraction({
+                action: "post",
+                actionId: question._id.toString(),
+                actionTarget: "question",
+                authorId: userId as string,
+            });
+        });
 
         await session.commitTransaction();
 

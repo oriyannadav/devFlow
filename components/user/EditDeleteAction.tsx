@@ -1,19 +1,10 @@
 'use client'
 
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { deleteQuestion } from "@/lib/actions/question.action";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
 interface Props {
     type: string;
@@ -29,6 +20,8 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
 
     const handleDelete = async () => {
         if  (type === 'Question') {
+            await deleteQuestion({ questionId: itemId });
+            
             toast('Question deleted',{
                 description: 'Your question has been deleted successfully.'
             })

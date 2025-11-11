@@ -87,3 +87,7 @@ interface GetUserAnswersParams extends PaginatedSearchParams {
 interface GetUsersTagsParams {
     userId: string;
 }
+
+interface DeleteQuestionParams {
+    questionId: string;
+}

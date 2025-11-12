@@ -10,6 +10,7 @@ import { EMPTY_QUESTION } from "@/constants/states";
 import CommonFilter from "@/components/filters/CommonFilter";
 import { HomePageFilters } from "@/constants/filters";
 import Pagination from "@/components/Pagination";
+import HomeFilter from "@/components/filters/HomeFilter";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string}>
@@ -51,6 +52,7 @@ const Home = async ({ searchParams }: SearchParams) => {
           containerClasses='hidden max-md:flex'
         />
       </section>
+      <HomeFilter />
 
       <DataRenderer 
         success={success}

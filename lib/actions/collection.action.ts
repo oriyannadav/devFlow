@@ -11,6 +11,7 @@ import { CollectionBaseParams } from "@/types/action";
 import handleError from "../handlers/error";
 import { CollectionBaseSchema, PaginatedSearchParamsSchema } from "../validations";
 import { ActionResponse, ErrorResponse, PaginatedSearchParams } from "@/types/global";
+import { cache } from "react";
 
 export async function toggleSaveQuestion(params: CollectionBaseParams): Promise<ActionResponse<{ saved: boolean }>> {
     const validationResult = await action({
@@ -97,7 +98,7 @@ export async function hasSavedQuestion(params: CollectionBaseParams): Promise<Ac
     }
 }
 
-export async function getSavedQuestions(params: PaginatedSearchParams): Promise<ActionResponse<{ collection: Collection[]; isNext: boolean }>> {
+export const getSavedQuestions = cache(async function getSavedQuestions(params: PaginatedSearchParams): Promise<ActionResponse<{ collection: Collection[]; isNext: boolean }>> {
     const validationResult = await action({
         params,
         schema: PaginatedSearchParamsSchema,
@@ -190,4 +191,4 @@ export async function getSavedQuestions(params: PaginatedSearchParams): Promise<
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-}
+})

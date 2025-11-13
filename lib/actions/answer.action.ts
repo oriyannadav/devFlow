@@ -14,6 +14,7 @@ import { ActionResponse, ErrorResponse } from "@/types/global";
 import { CreateAnswerParams, DeleteAnswerParams, GetAnswersParams } from "@/types/action";
 import { after } from "next/server";
 import { createInteraction } from "./interaction.action";
+import { cache } from "react";
 
 export async function createAnswer(params: CreateAnswerParams): Promise<ActionResponse<IAnswerDoc>> {
     const validationResult = await action({
@@ -73,7 +74,7 @@ export async function createAnswer(params: CreateAnswerParams): Promise<ActionRe
     }
 }
 
-export async function getAnswers(params: GetAnswersParams): Promise<ActionResponse<{ answers: Answer[]; isNext: boolean; totalAnswers: number; }>> {
+export const getAnswers = cache(async function getAnswers(params: GetAnswersParams): Promise<ActionResponse<{ answers: Answer[]; isNext: boolean; totalAnswers: number; }>> {
     const validationResult = await action({
         params,
         schema: GetAnswersSchema,
@@ -127,7 +128,7 @@ export async function getAnswers(params: GetAnswersParams): Promise<ActionRespon
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-}
+})
 
 export async function deleteAnswer(params: DeleteAnswerParams): Promise<ActionResponse> {
     const validationResult = await action({

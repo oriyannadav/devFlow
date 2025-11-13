@@ -274,7 +274,7 @@ export async function getRecommendedQuestions({ userId, query, skip, limit }: Re
     }
 }
 
-export async function getQuestions(params: PaginatedSearchParams): Promise<ActionResponse<{ questions: Question[], isNext: boolean}>> {
+export const getQuestions = cache(async function getQuestions(params: PaginatedSearchParams): Promise<ActionResponse<{ questions: Question[], isNext: boolean}>> {
     const validationResult = await action({
         params,
         schema: PaginatedSearchParamsSchema,
@@ -353,7 +353,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<Actio
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-}
+})
 
 export async function incrementViews(params: IncrementViewsParams): Promise<ActionResponse<{ views: number }>> {
     const validationResult = await action({
@@ -387,7 +387,7 @@ export async function incrementViews(params: IncrementViewsParams): Promise<Acti
     }
 }
 
-export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
+export const getHotQuestions = cache(async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
     try {
         await dbConnect(); 
 
@@ -402,7 +402,7 @@ export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
     } catch (error) {
         return handleError (error) as ErrorResponse;
     }
-}
+})
 
 export async function deleteQuestion(params: DeleteQuestionParams): Promise<ActionResponse> {
     const validationResult = await action({

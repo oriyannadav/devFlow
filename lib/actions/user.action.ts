@@ -9,8 +9,9 @@ import { GetUserSchema, PaginatedSearchParamsSchema } from "../validations";
 import { GetUserAnswersParams, GetUserParams, GetUserQuestionsParams, GetUsersTagsParams } from "@/types/action";
 import { Answer, Question, User } from "@/database";
 import { assignBadges } from "../utils";
+import { cache } from "react";
 
-export async function getUsers(params: PaginatedSearchParams): Promise<ActionResponse<{ users: User[]; isNext: boolean }>> {
+export const getUsers = cache(async function getUsers(params: PaginatedSearchParams): Promise<ActionResponse<{ users: User[]; isNext: boolean }>> {
     const validationResult = await action({
         params,
         schema: PaginatedSearchParamsSchema,
@@ -74,9 +75,9 @@ export async function getUsers(params: PaginatedSearchParams): Promise<ActionRes
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-}
+})
 
-export async function getUser(params: GetUserParams): Promise<ActionResponse<{ user: User; }>> {
+export const getUser = cache(async function getUser(params: GetUserParams): Promise<ActionResponse<{ user: User; }>> {
     const validationResult = await action({
         params,
         schema: GetUserSchema,
@@ -102,9 +103,9 @@ export async function getUser(params: GetUserParams): Promise<ActionResponse<{ u
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-}
+})
 
-export async function getUserQuestions(params: GetUserQuestionsParams): Promise<ActionResponse<{ questions: Question[]; isNext: boolean; }>> {
+export const getUserQuestions = cache(async function getUserQuestions(params: GetUserQuestionsParams): Promise<ActionResponse<{ questions: Question[]; isNext: boolean; }>> {
     const validationResult = await action({
         params,
         schema: GetUserSchema,
@@ -140,9 +141,9 @@ export async function getUserQuestions(params: GetUserQuestionsParams): Promise<
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-}
+})
 
-export async function getUserAnswers(params: GetUserAnswersParams): Promise<ActionResponse<{ answers: Answer[]; isNext: boolean; }>> {
+export const getUserAnswers = cache(async function getUserAnswers(params: GetUserAnswersParams): Promise<ActionResponse<{ answers: Answer[]; isNext: boolean; }>> {
     const validationResult = await action({
         params,
         schema: GetUserSchema,
@@ -177,9 +178,9 @@ export async function getUserAnswers(params: GetUserAnswersParams): Promise<Acti
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-}
+})
 
-export async function getUserTopTags(params: GetUsersTagsParams): Promise<ActionResponse<{ tags:{ _id: string, name: string, count: number }[]; }>> {
+export const getUserTopTags = cache(async function getUserTopTags(params: GetUsersTagsParams): Promise<ActionResponse<{ tags:{ _id: string, name: string, count: number }[]; }>> {
     const validationResult = await action({
         params,
         schema: GetUserSchema,
@@ -227,9 +228,9 @@ export async function getUserTopTags(params: GetUsersTagsParams): Promise<Action
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-}
+})
 
-export async function getUserStats(params: GetUserParams): Promise<ActionResponse<{ totalQuestions: number; totalAnswers: number; badges: BadgeCounts; }>> {
+export const getUserStats = cache(async function getUserStats(params: GetUserParams): Promise<ActionResponse<{ totalQuestions: number; totalAnswers: number; badges: BadgeCounts; }>> {
     const validationResult = await action ({
         params,
         schema: GetUserSchema,
@@ -284,4 +285,4 @@ export async function getUserStats(params: GetUserParams): Promise<ActionRespons
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-}
+})

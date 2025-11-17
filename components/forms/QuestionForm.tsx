@@ -18,6 +18,7 @@ import TagCard from "../cards/TagCard";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from "../ui/input";
+import { Question } from "@/types/global";
 
 const Editor = dynamic(() => import('@/components/editor'), {
     ssr: false

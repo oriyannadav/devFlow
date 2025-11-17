@@ -5,8 +5,8 @@ import { ActionResponse, BadgeCounts, ErrorResponse, PaginatedSearchParams } fro
 
 import action from "../handlers/actions";
 import handleError from "../handlers/error";
-import { GetUserSchema, PaginatedSearchParamsSchema } from "../validations";
-import { GetUserAnswersParams, GetUserParams, GetUserQuestionsParams, GetUsersTagsParams } from "@/types/action";
+import { GetUserSchema, PaginatedSearchParamsSchema, UpdateUserSchema } from "../validations";
+import { GetUserAnswersParams, GetUserParams, GetUserQuestionsParams, GetUsersTagsParams, UpdateUserParams } from "@/types/action";
 import { Answer, Question, User } from "@/database";
 import { assignBadges } from "../utils";
 import { cache } from "react";
@@ -286,3 +286,30 @@ export const getUserStats = cache(async function getUserStats(params: GetUserPar
         return handleError(error) as ErrorResponse;
     }
 })
+
+export async function updateUser(params: UpdateUserParams): Promise<ActionResponse<{ user: User }>> {
+    const validationResult = await action({
+        params,
+        schema: UpdateUserSchema,
+        authorize: true,
+    });
+
+    if (validationResult instanceof Error) {
+        return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { user } = validationResult.session!;
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(user?.id, params, {
+            new: true,
+        });
+
+        return {
+            success: true,
+            data: { user: JSON.parse(JSON.stringify(updatedUser)) },
+        }
+    } catch (error) {
+        return handleError(error) as ErrorResponse;
+    }
+}

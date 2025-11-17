@@ -130,3 +130,8 @@ interface JobFilterParams {
     page: string;
     location: string;
 }
+
+interface GlobalSearchParams {
+    query: string;
+    type: string | null;
+}

@@ -10,6 +10,7 @@ const ROUTES = {
     PROFILE: (id: string) => `/profile/${id}`,
     QUESTION: (id: string) => `/questions/${id}`,
     TAG: (id: string) => `/tags/${id}`,
+    JOB: (id: string) => `/jobs/${id}`,
     SIGN_IN_WITH_OAUTH: 'signin-with-oauth',
 }
 

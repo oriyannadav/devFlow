@@ -17,6 +17,7 @@ import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { createInteraction } from "./interaction.action";
 import { auth } from "@/auth";
+import { cache } from "react";
 
 interface CreateQuestionParams {
     title: string;
@@ -200,11 +201,10 @@ export async function editQuestion(params: EditQuestionParams): Promise<ActionRe
     }
 }
 
-export async function getQuestion (params: GetQuestionParams): Promise<ActionResponse<Question>> {
+export const getQuestion = cache(async function getQuestion(params: GetQuestionParams): Promise<ActionResponse<Question>> {
     const validationResult = await action({
         params,
         schema: GetQuestionSchema,
-        authorize: true
     });
 
     if (validationResult instanceof Error) {
@@ -224,7 +224,7 @@ export async function getQuestion (params: GetQuestionParams): Promise<ActionRes
     } catch (error) {
        return handleError(error as Error) as ErrorResponse;
     }
-}
+})
 
 export async function getRecommendedQuestions({ userId, query, skip, limit }: RecommendationParams) {
     const interaction = await Interaction.find({

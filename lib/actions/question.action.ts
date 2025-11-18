@@ -17,7 +17,6 @@ import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { createInteraction } from "./interaction.action";
 import { auth } from "@/auth";
-import { cache } from "react";
 
 interface CreateQuestionParams {
     title: string;
@@ -201,7 +200,7 @@ export async function editQuestion(params: EditQuestionParams): Promise<ActionRe
     }
 }
 
-export const getQuestion = cache(async function getQuestion(params: GetQuestionParams): Promise<ActionResponse<Question>> {
+export async function getQuestion (params: GetQuestionParams): Promise<ActionResponse<Question>> {
     const validationResult = await action({
         params,
         schema: GetQuestionSchema,
@@ -225,7 +224,7 @@ export const getQuestion = cache(async function getQuestion(params: GetQuestionP
     } catch (error) {
        return handleError(error as Error) as ErrorResponse;
     }
-})
+}
 
 export async function getRecommendedQuestions({ userId, query, skip, limit }: RecommendationParams) {
     const interaction = await Interaction.find({
@@ -274,7 +273,7 @@ export async function getRecommendedQuestions({ userId, query, skip, limit }: Re
     }
 }
 
-export const getQuestions = cache(async function getQuestions(params: PaginatedSearchParams): Promise<ActionResponse<{ questions: Question[], isNext: boolean}>> {
+export async function getQuestions(params: PaginatedSearchParams): Promise<ActionResponse<{ questions: Question[], isNext: boolean}>> {
     const validationResult = await action({
         params,
         schema: PaginatedSearchParamsSchema,
@@ -353,7 +352,7 @@ export const getQuestions = cache(async function getQuestions(params: PaginatedS
     } catch (error) {
         return handleError(error) as ErrorResponse;
     }
-})
+}
 
 export async function incrementViews(params: IncrementViewsParams): Promise<ActionResponse<{ views: number }>> {
     const validationResult = await action({
@@ -387,7 +386,7 @@ export async function incrementViews(params: IncrementViewsParams): Promise<Acti
     }
 }
 
-export const getHotQuestions = cache(async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
+export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
     try {
         await dbConnect(); 
 
@@ -402,7 +401,7 @@ export const getHotQuestions = cache(async function getHotQuestions(): Promise<A
     } catch (error) {
         return handleError (error) as ErrorResponse;
     }
-})
+}
 
 export async function deleteQuestion(params: DeleteQuestionParams): Promise<ActionResponse> {
     const validationResult = await action({
